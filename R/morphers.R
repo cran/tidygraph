@@ -60,6 +60,18 @@ to_subgraph <- function(graph, ..., subset_by = NULL) {
     subgraph = as_tbl_graph(subset)
   )
 }
+#' @describeIn morphers Convert a graph to a single component containing the specified node
+#' @param node The center of the neighborhood for `to_local_neighborhood()` and
+#' the node to that should be included in the component for `to_subcomponent()`
+#' @importFrom igraph gorder components
+#' @export
+to_subcomponent <- function(graph, node) {
+  node <- eval_tidy(enquo(node), as_tibble(graph, 'nodes'))
+  node <- as_ind(node, gorder(graph))
+  if (length(node) != 1) stop('Please provide a single node for defining the subcomponent', call. = FALSE)
+  component_membership <- components(graph)$membership == components(graph)$membership[node]
+  to_subgraph(graph, component_membership, subset_by = 'nodes')
+}
 #' @describeIn morphers Convert a graph into a list of separate subgraphs. `...`
 #' is evaluated in the same manner as `group_by`. When unmorphing all data in
 #' the subgraphs will get merged back, but in the case of `split_by = 'edges'`
@@ -75,15 +87,15 @@ to_split <- function(graph, ..., split_by = NULL) {
   }
   ind <- as_tibble(graph, active = split_by)
   ind <- group_by(ind, ...)
-  splits <- lapply(attr(ind, 'indices'), function(i) {
+  splits <- lapply(group_indices(ind), function(i) {
     g <- switch(
       split_by,
-      nodes = induced_subgraph(graph, i+1),
-      edges = subgraph.edges(graph, i+1)
+      nodes = induced_subgraph(graph, i),
+      edges = subgraph.edges(graph, i)
     )
     as_tbl_graph(g)
   })
-  split_names <- attr(ind, 'labels')
+  split_names <- group_labels(ind)
   split_names <- lapply(names(split_names), function(n) {
     paste(n, split_names[[n]], sep = ': ')
   })
@@ -96,7 +108,7 @@ to_split <- function(graph, ..., split_by = NULL) {
 #' @importFrom igraph decompose
 #' @export
 to_components <- function(graph, type = 'weak') {
-  graphs <- decompose(graph, mode= type)
+  graphs <- decompose(graph, mode = type)
   graphs <- lapply(graphs, as_tbl_graph)
   graphs
 }
@@ -113,7 +125,6 @@ to_complement <- function(graph, loops = FALSE) {
 }
 #' @describeIn morphers Convert a graph into the local neighborhood around a
 #' single node. When unmorphing all data will be merged back.
-#' @param node The center of the neighborhood
 #' @param order The radius of the neighborhood
 #' @param mode How should edges be followed? `'out'` only follows outbound
 #' edges, `'in'` only follows inbound edges, and `'all'` follows all edges. This
@@ -121,6 +132,7 @@ to_complement <- function(graph, loops = FALSE) {
 #' @importFrom igraph make_ego_graph gorder
 #' @export
 to_local_neighborhood <- function(graph, node, order = 1, mode = 'all') {
+  node <- eval_tidy(enquo(node), as_tibble(graph, 'nodes'))
   node <- as_ind(node, gorder(graph))
   ego <- make_ego_graph(graph, order = order, nodes = node, mode = mode)
   list(
@@ -133,6 +145,7 @@ to_local_neighborhood <- function(graph, node, order = 1, mode = 'all') {
 #' @importFrom igraph dominator_tree gorder
 #' @export
 to_dominator_tree <- function(graph, root, mode = 'out') {
+  root <- eval_tidy(enquo(root), as_tibble(graph, 'nodes'))
   root <- as_ind(root, gorder(graph))
   dom <- dominator_tree(graph, root = root, mode = mode)
   list(
@@ -146,8 +159,7 @@ to_dominator_tree <- function(graph, root, mode = 'out') {
 #' @importFrom rlang enquo eval_tidy
 #' @export
 to_minimum_spanning_tree <- function(graph, weights = NULL) {
-  weights <- enquo(weights)
-  weights <- eval_tidy(weights, as_tibble(graph, active = 'edges'))
+  weights <- eval_tidy(enquo(weights), as_tibble(graph, 'edges'))
   mst <- mst(graph, weights = weights)
   list(
     mst = as_tbl_graph(mst)
@@ -160,10 +172,12 @@ to_minimum_spanning_tree <- function(graph, weights = NULL) {
 #' @importFrom rlang enquo eval_tidy
 #' @export
 to_shortest_path <- function(graph, from, to, mode = 'out', weights = NULL) {
+  nodes <- as_tibble(graph, 'nodes')
+  from <- eval_tidy(enquo(from), nodes)
   from <- as_ind(from, gorder(graph))
+  to <- eval_tidy(enquo(to), nodes)
   to <- as_ind(to, gorder(graph))
-  weights <- enquo(weights)
-  weights <- eval_tidy(weights, as_tibble(graph, active = 'edges'))
+  weights <- eval_tidy(enquo(weights), as_tibble(graph, active = 'edges'))
   path <- shortest_paths(graph, from = from, to = to, mode = mode, weights = weights, output = 'both')
   short_path <- slice(activate(graph, 'edges'), as.integer(path$epath[[1]]))
   short_path <- slice(activate(short_path, 'nodes'), as.integer(path$vpath[[1]]))
@@ -178,6 +192,7 @@ to_shortest_path <- function(graph, from, to, mode = 'out', weights = NULL) {
 #' @importFrom igraph bfs gorder
 #' @export
 to_bfs_tree <- function(graph, root, mode = 'out', unreachable = FALSE) {
+  root <- eval_tidy(enquo(root), as_tibble(graph, 'nodes'))
   root <- as_ind(root, gorder(graph))
   search <- bfs(graph, root, neimode = mode, unreachable = unreachable, father = TRUE)
   bfs_graph <- search_to_graph(graph, search)
@@ -190,6 +205,7 @@ to_bfs_tree <- function(graph, root, mode = 'out', unreachable = FALSE) {
 #' @importFrom igraph bfs gorder
 #' @export
 to_dfs_tree <- function(graph, root, mode = 'out', unreachable = FALSE) {
+  root <- eval_tidy(enquo(root), as_tibble(graph, 'nodes'))
   root <- as_ind(root, gorder(graph))
   search <- dfs(graph, root, neimode = mode, unreachable = unreachable, father = TRUE)
   dfs_graph <- search_to_graph(graph, search)
@@ -224,7 +240,7 @@ to_simple <- function(graph) {
 to_contracted <- function(graph, ..., simplify = TRUE) {
   nodes <- as_tibble(graph, active = 'nodes')
   nodes <- group_by(nodes, ...)
-  ind <- attr(nodes, 'indices')
+  ind <- group_indices(nodes)
   ind <- rep(seq_along(ind), lengths(ind))[order(unlist(ind))]
   contracted <- as_tbl_graph(contract(graph, ind, vertex.attr.comb = 'ignore'))
   nodes <- nest(nodes, .key = '.orig_data')
@@ -244,6 +260,7 @@ to_contracted <- function(graph, ..., simplify = TRUE) {
 #' @importFrom igraph unfold_tree
 #' @export
 to_unfolded_tree <- function(graph, root, mode = 'out') {
+  root <- eval_tidy(enquo(root), as_tibble(graph, 'nodes'))
   roots <- as_ind(root, gorder(graph))
   graph <- unfold_tree(graph, mode, roots)
   list(

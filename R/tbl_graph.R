@@ -6,7 +6,7 @@
 #' `grouped_tbl_graph` is the equivalent of a `grouped_df` where either the
 #' nodes or the edges has been grouped. The `grouped_tbl_graph` is not
 #' constructed directly but by using the [group_by()] verb. After creation of a
-#' `tble_graph` the nodes are activated by default. The context can be changed
+#' `tbl_graph` the nodes are activated by default. The context can be changed
 #' using the [activate()] verb and affects all subsequent operations. Changing
 #' context automatically drops any grouping. The current active context can
 #' always be extracted with [as_tibble()], which drops the graph structure and
@@ -24,7 +24,8 @@
 #'
 #' @param edges A `data.frame` containing information about the edges in the
 #' graph. The terminal nodes of each edge must either be encoded in a `to` and
-#' `from` column, or in the two first columns, as integers.
+#' `from` column, or in the two first columns, as integers. These integers refer to
+#' `nodes` index.
 #'
 #' @param x An object convertible to a `tbl_graph`
 #'
@@ -36,7 +37,12 @@
 #' @param ... Arguments passed on to the conversion function
 #'
 #' @return A `tbl_graph` object
-#'
+#' 
+#' @examples 
+#' rstat_nodes <- data.frame(name = c("Hadley", "David", "Romain", "Julia"))
+#' rstat_edges <- data.frame(from = c(1, 1, 1, 2, 3, 3, 4, 4, 4), 
+#'                             to = c(2, 3, 4, 1, 1, 2, 1, 2, 3))
+#' tbl_graph(nodes = rstat_nodes, edges = rstat_edges)
 #' @export
 #'
 tbl_graph <- function(nodes = NULL, edges = NULL, directed = TRUE) {
@@ -63,6 +69,7 @@ is.tbl_graph <- function(x) {
 #' @importFrom tibble trunc_mat
 #' @importFrom tools toTitleCase
 #' @importFrom rlang as_quosure sym
+#' @importFrom pillar style_subtle
 #' @export
 print.tbl_graph <- function(x, ...) {
   arg_list <- list(...)
@@ -73,15 +80,18 @@ print.tbl_graph <- function(x, ...) {
   names(top$summary)[1] <- toTitleCase(paste0(substr(active(x), 1, 4), ' data'))
   bottom <- do.call(trunc_mat, modifyList(arg_list, list(x = as_tibble(x, active = not_active), n = 3)))
   names(bottom$summary)[1] <- toTitleCase(paste0(substr(not_active, 1, 4), ' data'))
-  cat('# A tbl_graph: ', gorder(x), ' nodes and ', gsize(x), ' edges\n', sep = '')
-  cat('#\n')
-  cat('# ', graph_desc, '\n', sep = '')
-  cat('#\n')
+  cat_subtle('# A tbl_graph: ', gorder(x), ' nodes and ', gsize(x), ' edges\n', sep = '')
+  cat_subtle('#\n')
+  cat_subtle('# ', graph_desc, '\n', sep = '')
+  cat_subtle('#\n')
   print(top)
-  cat('#\n')
+  cat_subtle('#\n')
   print(bottom)
   invisible(x)
 }
+
+cat_subtle <- function(...) cat(pillar::style_subtle(paste0(...)))
+
 #' @export
 print.morphed_tbl_graph <- function(x, ...) {
   graph <- attr(x, '.orig_graph')
