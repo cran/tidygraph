@@ -1,7 +1,7 @@
-65f87295b68e4c07f19249f0fd5264d5 *DESCRIPTION
+0c5473362b9d053425425bf81f4c8076 *DESCRIPTION
 390aa971d748d2d8595f400ac17045c9 *LICENSE
 14a7945b40e79489227d974db163a54b *NAMESPACE
-17648bdbc9d346e3c9a27ab3f9a43495 *NEWS.md
+30d9094ddd669ffb98bbcc897900b32b *NEWS.md
 f81c72d4b332260cf171daba16ff4375 *R/RcppExports.R
 4ed9047e8043852850764797d822b39b *R/aaa.R
 d7ea9f025fbe09f02a91797363d83349 *R/activate.R
@@ -30,7 +30,7 @@ c5c071645a77f7edd0eaa3cfa396d6ba *R/local.R
 3fc9b46ca1e2e3c831e0cf1b9a11c403 *R/map.R
 e3227729902c71ee1abe09113e38efca *R/matrix.R
 df06d4bc6ca2eb27e43f2052c7fb72e5 *R/morph.R
-5d1e1b1ae9c529df996179d1d76f045f *R/morphers.R
+ecf4c1cb0ff3065d673618ae243f3834 *R/morphers.R
 fce1c13f70b59963e16eb9e0e7e3fb3e *R/mutate.R
 37fa468550cbd5f95b98010cf936326b *R/network.R
 6f5336178272084b845cebe474b5061b *R/node.R
@@ -43,8 +43,8 @@ ccbd8cbc79386e2cf8fc3b1f20581644 *R/plot.R
 ffc89f8eac9347f6e341eac467cd7b3c *R/pull.R
 4b5caefefb712b756abf0e9c15d98426 *R/rename.R
 7368a493baf551853fb3bc5c34973d07 *R/reroute.R
-f0dcd233d3b8440f62db3021ee65037c *R/sample_frac.R
-d801acc9455cfcfe841095882feb014b *R/sample_n.R
+468a5161cb0a13e042e30d44edadcc58 *R/sample_frac.R
+5aa1865963b7391210f2ce8db4ecefc7 *R/sample_n.R
 35ecb1ba9b0d2111119c3f56bffc6a1f *R/search.R
 2f9c5cee142fcfc15e1593119124bdb3 *R/select.R
 9b2335eb7392d7baa8219ccb87a1ad59 *R/slice.R
