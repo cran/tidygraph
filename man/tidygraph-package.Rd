@@ -6,7 +6,7 @@
 \alias{tidygraph-package}
 \title{tidygraph: A Tidy API for Graph Manipulation}
 \description{
-\if{html}{\figure{logo.png}{options: align='right'}}
+\if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
 
 A graph, while not "tidy" in itself, can be thought of as two tidy
     data frames describing node and edge data respectively. 'tidygraph'
@@ -17,12 +17,14 @@ A graph, while not "tidy" in itself, can be thought of as two tidy
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://tidygraph.data-imaginist.com}
   \item \url{https://github.com/thomasp85/tidygraph}
   \item Report bugs at \url{https://github.com/thomasp85/tidygraph/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Thomas Lin Pedersen \email{thomasp85@gmail.com}
+\strong{Maintainer}: Thomas Lin Pedersen \email{thomasp85@gmail.com} (\href{https://orcid.org/0000-0002-5147-4711}{ORCID})
 
 }
+\keyword{internal}

@@ -19,7 +19,7 @@ node_constraint(weights = NULL)
 
 node_coreness(mode = "out")
 
-node_diversity(weights = NULL)
+node_diversity(weights)
 
 node_bridging_score()
 
@@ -43,7 +43,7 @@ graph.
 \description{
 These functions are a collection of node measures that do not really fall
 into the class of \link{centrality} measures. For lack of a better place they are
-collected under the \code{node_*} umbrella of functions.
+collected under the \verb{node_*} umbrella of functions.
 }
 \section{Functions}{
 \itemize{

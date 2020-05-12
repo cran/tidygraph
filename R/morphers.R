@@ -79,6 +79,7 @@ to_subcomponent <- function(graph, node) {
 #' present in multiple subgraphs).
 #' @importFrom igraph induced_subgraph subgraph.edges
 #' @importFrom stats setNames
+#' @importFrom dplyr group_rows
 #' @export
 to_split <- function(graph, ..., split_by = NULL) {
   if (is.null(split_by)) {
@@ -87,7 +88,7 @@ to_split <- function(graph, ..., split_by = NULL) {
   }
   ind <- as_tibble(graph, active = split_by)
   ind <- group_by(ind, ...)
-  splits <- lapply(group_indices(ind), function(i) {
+  splits <- lapply(group_rows(ind), function(i) {
     g <- switch(
       split_by,
       nodes = induced_subgraph(graph, i),
@@ -95,7 +96,7 @@ to_split <- function(graph, ..., split_by = NULL) {
     )
     as_tbl_graph(g)
   })
-  split_names <- group_labels(ind)
+  split_names <- group_keys(ind)
   split_names <- lapply(names(split_names), function(n) {
     paste(n, split_names[[n]], sep = ': ')
   })
@@ -160,7 +161,8 @@ to_dominator_tree <- function(graph, root, mode = 'out') {
 #' @export
 to_minimum_spanning_tree <- function(graph, weights = NULL) {
   weights <- eval_tidy(enquo(weights), as_tibble(graph, 'edges'))
-  mst <- mst(graph, weights = weights)
+  algorithm <- if (is.null(weights)) 'unweighted' else 'prim'
+  mst <- mst(graph, weights = weights, algorithm = algorithm)
   list(
     mst = as_tbl_graph(mst)
   )
@@ -178,6 +180,9 @@ to_shortest_path <- function(graph, from, to, mode = 'out', weights = NULL) {
   to <- eval_tidy(enquo(to), nodes)
   to <- as_ind(to, gorder(graph))
   weights <- eval_tidy(enquo(weights), as_tibble(graph, active = 'edges'))
+  if (is.null(weights)) {
+    weights <- NA
+  }
   path <- shortest_paths(graph, from = from, to = to, mode = mode, weights = weights, output = 'both')
   short_path <- slice(activate(graph, 'edges'), as.integer(path$epath[[1]]))
   short_path <- slice(activate(short_path, 'nodes'), as.integer(path$vpath[[1]]))
@@ -215,13 +220,16 @@ to_dfs_tree <- function(graph, root, mode = 'out', unreachable = FALSE) {
 }
 #' @describeIn morphers Collapse parallel edges and remove loops in a graph.
 #' When unmorphing all data will get merged back
+#' @param remove_multiples Should edges that run between the same nodes be
+#' reduced to one
+#' @param remove_loops Should edges that start and end at the same node be removed
 #' @importFrom igraph simplify
 #' @export
-to_simple <- function(graph) {
+to_simple <- function(graph, remove_multiples = TRUE, remove_loops = TRUE) {
   edges <- as_tibble(graph, active = 'edges')
   graph <- set_edge_attributes(graph, edges[, '.tidygraph_edge_index', drop = FALSE])
   edges$.tidygraph_edge_index <- NULL
-  simple <- as_tbl_graph(simplify(graph, remove.multiple = TRUE, remove.loops = TRUE, edge.attr.comb = list))
+  simple <- as_tbl_graph(simplify(graph, remove.multiple = remove_multiples, remove.loops = remove_loops, edge.attr.comb = list))
   new_edges <- as_tibble(simple, active = 'edges')
   new_edges$.orig_data <- lapply(new_edges$.tidygraph_edge_index, function(i) edges[i, , drop = FALSE])
   simple <- set_edge_attributes(simple, new_edges)
@@ -234,16 +242,15 @@ to_simple <- function(graph) {
 #' data will get merged back.
 #' @param simplify Should edges in the contracted graph be simplified? Defaults
 #' to `TRUE`
-#' @importFrom tidyr nest
+#' @importFrom tidyr nest_legacy
 #' @importFrom igraph contract
 #' @export
 to_contracted <- function(graph, ..., simplify = TRUE) {
   nodes <- as_tibble(graph, active = 'nodes')
   nodes <- group_by(nodes, ...)
   ind <- group_indices(nodes)
-  ind <- rep(seq_along(ind), lengths(ind))[order(unlist(ind))]
   contracted <- as_tbl_graph(contract(graph, ind, vertex.attr.comb = 'ignore'))
-  nodes <- nest(nodes, .key = '.orig_data')
+  nodes <- nest_legacy(nodes, .key = '.orig_data')
   ind <- lapply(nodes$.orig_data, `[[`, '.tidygraph_node_index')
   nodes$.orig_data <- lapply(nodes$.orig_data, function(x) {x$.tidygraph_node_index <- NULL; x})
   nodes$.tidygraph_node_index <- ind
@@ -291,9 +298,12 @@ to_undirected <- function(graph) {
 #' @importFrom stats as.dendrogram
 #' @importFrom rlang .data enquo eval_tidy
 #' @export
-to_hierarchical_clusters <- function(graph, method = 'walktrap', weights = NA, ...) {
+to_hierarchical_clusters <- function(graph, method = 'walktrap', weights = NULL, ...) {
   weights <- enquo(weights)
   weights <- eval_tidy(weights, .E())
+  if (is.null(weights)) {
+    weights <- NA
+  }
   hierarchy <- switch(
     method,
     walktrap = cluster_walktrap(graph, weights = weights, ...),
