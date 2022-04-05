@@ -48,9 +48,13 @@ activate.tbl_graph <- function(.data, what) {
 #' @export
 #' @importFrom rlang enquo
 activate.grouped_tbl_graph <- function(.data, what) {
-  message('Ungrouping graph...')
   what <- enquo(what)
-  activate(ungroup(.data), !!what)
+#  if (gsub('"', '', quo_text(what)) == active(.data)) {
+#    return(.data)
+#  }
+  cli::cli_inform('Ungrouping {.arg .data}...')
+  .data <- ungroup(.data)
+  activate(.data, !!what)
 }
 #' @export
 activate.morphed_tbl_graph <- function(.data, what) {
@@ -72,7 +76,7 @@ active <- function(x) {
     nodes = 'nodes',
     links = ,
     edges = 'edges',
-    stop('Only possible to activate nodes and edges', call. = FALSE)
+    cli::cli_abort('Only possible to activate nodes and edges')
   )
   attr(x, 'active') <- value
   x

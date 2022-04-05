@@ -45,7 +45,7 @@ to_linegraph <- function(graph) {
 to_subgraph <- function(graph, ..., subset_by = NULL) {
   if (is.null(subset_by)) {
     subset_by <- active(graph)
-    message('Subsetting by ', subset_by)
+    cli::cli_inform('Subsetting by {subset_by}')
   }
   ind <- as_tibble(graph, active = subset_by)
   ind <- mutate(ind, .tidygraph_index = seq_len(n()))
@@ -68,7 +68,7 @@ to_subgraph <- function(graph, ..., subset_by = NULL) {
 to_subcomponent <- function(graph, node) {
   node <- eval_tidy(enquo(node), as_tibble(graph, 'nodes'))
   node <- as_ind(node, gorder(graph))
-  if (length(node) != 1) stop('Please provide a single node for defining the subcomponent', call. = FALSE)
+  if (length(node) != 1) cli::cli_abort('{.arg node} must identify a single node in the graph')
   component_membership <- components(graph)$membership == components(graph)$membership[node]
   to_subgraph(graph, component_membership, subset_by = 'nodes')
 }
@@ -84,7 +84,7 @@ to_subcomponent <- function(graph, node) {
 to_split <- function(graph, ..., split_by = NULL) {
   if (is.null(split_by)) {
     split_by <- active(graph)
-    message('Subsetting by ', split_by)
+    cli::cli_inform('Splitting by {split_by}')
   }
   ind <- as_tibble(graph, active = split_by)
   ind <- group_by(ind, ...)
@@ -249,6 +249,7 @@ to_contracted <- function(graph, ..., simplify = TRUE) {
   nodes <- as_tibble(graph, active = 'nodes')
   nodes <- group_by(nodes, ...)
   ind <- group_indices(nodes)
+  ind <- match(ind, unique(ind))
   contracted <- as_tbl_graph(contract(graph, ind, vertex.attr.comb = 'ignore'))
   nodes <- nest_legacy(nodes, .key = '.orig_data')
   ind <- lapply(nodes$.orig_data, `[[`, '.tidygraph_node_index')
@@ -294,7 +295,7 @@ to_undirected <- function(graph) {
 }
 #' @describeIn morphers Convert a graph into a hierarchical clustering based on a grouping
 #' @param method The clustering method to use. Either `'walktrap'`, `'leading_eigen'`, or `'edge_betweenness'`
-#' @importFrom igraph cluster_walktrap cluster_leading_eigen cluster_edge_betweenness
+#' @importFrom igraph cluster_walktrap cluster_leading_eigen cluster_edge_betweenness gorder vertex_attr
 #' @importFrom stats as.dendrogram
 #' @importFrom rlang .data enquo eval_tidy
 #' @export
@@ -311,7 +312,9 @@ to_hierarchical_clusters <- function(graph, method = 'walktrap', weights = NULL,
     edge_betweenness = cluster_edge_betweenness(graph, weights = weights, ...)
   )
   hierarchy <- as_tbl_graph(as.dendrogram(hierarchy))
-  hierarchy <- mutate(hierarchy, .tidygraph_node_index = as.integer(as.character(.data$label)),
+  label <- vertex_attr(hierarchy, "label")
+  orig_label <- vertex_attr(graph, "name") %||% as.character(seq_len(gorder(graph)))
+  hierarchy <- mutate(hierarchy, .tidygraph_node_index = match(label, orig_label),
                       label = NULL)
   hierarchy <- left_join(hierarchy, as_tibble(graph, active = 'nodes'),
                          by = c('.tidygraph_node_index' = '.tidygraph_node_index'))

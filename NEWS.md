@@ -1,3 +1,13 @@
+# tidygraph 1.2.1
+
+* Move compiled code to cpp11
+* Improve messaging with rlang and cli
+* New feature: the following  hierarchical clustering functions 
+  `group_edge_betweenness`, `group_fast_greedy`, `group_leading_eigen` and 
+  `group_walktrap` have a new argument `n_groups` that controls the numbers of 
+  groups computed. The argument expects an integer value and it is `NULL` by 
+  default.
+
 # tidygraph 1.2.0
 
 * graph description now recognise undirected trees

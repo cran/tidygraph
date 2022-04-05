@@ -6,19 +6,19 @@ as_tbl_graph.matrix <- function(x, directed = TRUE, ...) {
     edgelist = as_graph_edgelist(x, directed),
     adjacency = as_graph_adj_matrix(x, directed),
     incidence = as_graph_incidence(x, directed),
-    unknown = stop('Unknown matrix format', call. = FALSE)
+    unknown = cli::cli_abort('Unknown matrix format')
   )
   as_tbl_graph(graph)
 }
 
 guess_matrix_type <- function(x) {
-  if (ncol(x) == 2) {
-    'edgelist'
-  } else if (nrow(x) == ncol(x) &&
-             mode(x) %in% c('numeric', 'integer') &&
-             ((is.null(rownames(x)) && is.null(colnames(x))) ||
-              colnames(x) == rownames(x))) {
+  if (nrow(x) == ncol(x) &&
+      mode(x) %in% c('numeric', 'integer') &&
+      ((is.null(rownames(x)) && is.null(colnames(x))) ||
+       colnames(x) == rownames(x))) {
     'adjacency'
+  } else if (ncol(x) == 2) {
+    'edgelist'
   } else if (mode(x) %in% c('numeric', 'integer')) {
     'incidence'
   } else {
