@@ -1,7 +1,7 @@
 Package: tidygraph
 Type: Package
 Title: A Tidy API for Graph Manipulation
-Version: 1.2.1
+Version: 1.2.2
 Authors@R: 
     person(given = "Thomas Lin",
            family = "Pedersen",
@@ -16,7 +16,7 @@ Description: A graph, while not "tidy" in itself, can be thought of as two tidy
     a lot of common graph algorithms.
 License: MIT + file LICENSE
 Encoding: UTF-8
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Imports: tibble, dplyr (>= 0.8.5), igraph, magrittr, utils, rlang, R6,
         tools, stats, tidyr, pillar, cli
 URL: https://tidygraph.data-imaginist.com,
@@ -27,8 +27,8 @@ Suggests: network, data.tree, ape, graph, methods, testthat, covr,
         seriation, netrankr, influenceR, NetSwan
 SystemRequirements: C++11
 NeedsCompilation: yes
-Packaged: 2022-04-05 15:23:18 UTC; thomas
+Packaged: 2022-08-22 06:43:45 UTC; thomas
 Author: Thomas Lin Pedersen [cre, aut]
     (<https://orcid.org/0000-0002-5147-4711>)
 Repository: CRAN
-Date/Publication: 2022-04-05 16:00:02 UTC
+Date/Publication: 2022-08-22 07:20:02 UTC

@@ -32,13 +32,10 @@ argument is ignored for undirected graphs.}
 
 \item{mindist}{The minimum distance to include the vertex in the result.}
 
-\item{weights}{Weight vector. If the graph has a \code{weight} edge
-attribute, then this is used by default. If this argument is given, then
-vertex strength (see \code{\link[igraph]{strength}}) is used instead of vertex
-degree. But note that \code{knnk} is still given in the function of the
-normal vertex degree.
-Weights are are used to calculate a weighted degree (also called
-\code{\link[igraph]{strength}}) instead of the degree.}
+\item{weights}{An edge weight vector. For \code{local_ave_degree}: If this argument
+is given, the average vertex strength is calculated instead of vertex degree.
+For \code{local_transitivity}: if given weighted transitivity using the approach by
+\emph{A. Barrat} will be calculated.}
 }
 \value{
 A numeric vector or a list (for \code{local_members}) with elements
@@ -51,20 +48,20 @@ the node position.
 }
 \section{Functions}{
 \itemize{
-\item \code{local_size}: The size of the neighborhood in a given distance from
+\item \code{local_size()}: The size of the neighborhood in a given distance from
 the node. (Note that the node itself is included unless \code{mindist > 0}). Wraps \code{\link[igraph:ego]{igraph::ego_size()}}.
 
-\item \code{local_members}: The members of the neighborhood of each node in a
+\item \code{local_members()}: The members of the neighborhood of each node in a
 given distance. Wraps \code{\link[igraph:ego]{igraph::ego()}}.
 
-\item \code{local_triangles}: The number of triangles each node participate in. Wraps \code{\link[igraph:count_triangles]{igraph::count_triangles()}}.
+\item \code{local_triangles()}: The number of triangles each node participate in. Wraps \code{\link[igraph:count_triangles]{igraph::count_triangles()}}.
 
-\item \code{local_ave_degree}: Calculates the average degree based on the neighborhood of each node. Wraps \code{\link[igraph:knn]{igraph::knn()}}.
+\item \code{local_ave_degree()}: Calculates the average degree based on the neighborhood of each node. Wraps \code{\link[igraph:knn]{igraph::knn()}}.
 
-\item \code{local_transitivity}: Calculate the transitivity of each node, that is, the
+\item \code{local_transitivity()}: Calculate the transitivity of each node, that is, the
 propensity for the nodes neighbors to be connected. Wraps \code{\link[igraph:transitivity]{igraph::transitivity()}}
-}}
 
+}}
 \examples{
 # Get all neighbors of each graph
 create_notable('chvatal') \%>\%
