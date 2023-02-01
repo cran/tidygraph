@@ -1,12 +1,12 @@
-115ed538aaca632f0a31469a4ac69415 *DESCRIPTION
+b2632ac5b57deef1e116a0d5bdaaa0ab *DESCRIPTION
 390aa971d748d2d8595f400ac17045c9 *LICENSE
 7c059b6f91c20f1aba5a895ce4b72f18 *NAMESPACE
-3fd615c1471c8903cc245df829a5735e *NEWS.md
+9633f80478f03e5b3780d66eec651d10 *NEWS.md
 605ddc15153470328dae01b4ba77f3e3 *R/aaa.R
 73c043a2d43af80951174c52a55450af *R/activate.R
 978752833174e4770b4badaf6ea511ce *R/arrange.R
 215a8ffae717a0a9de8fa1f4bf1e82b3 *R/bind.R
-cf4f668b4e5f063f86efa60b2363d4e5 *R/centrality.R
+d8b103700d8d317ed7b1625293232934 *R/centrality.R
 986f901dfc9c1f5af70fd85d9a48fe86 *R/context.R
 574437bf8f242cc069414f6021add516 *R/cpp11.R
 fcbeb6c6e3962f01b3ffbcaac8acd805 *R/create.R
@@ -51,10 +51,10 @@ b19cfc544e306b1b26d1eec2509b3663 *R/sample_frac.R
 07b44afdaacdbd2ed2d0fe994e7bcdfd *R/tibble.R
 659c50b1177394198fd46509e09a25c5 *R/tidygraph-package.R
 7321d13bd47a6ab1e543915d6283c82d *R/utils.R
-1d07179d15f85241af7686cd54591d87 *README.md
+dfae502e5433f44c6140af109fc09247 *README.md
 5b4c66c1f1eb0bec73e5b679f90a0dfc *man/activate.Rd
-0811f8455fbd29ea770ad1c6bd3255bd *man/bind_graphs.Rd
-40bf6516ab0b36eaf9c8eacb6b2345a6 *man/centrality.Rd
+762bc52e809226f082b3356bb6a32fdf *man/bind_graphs.Rd
+d3467986ef0f38c9a056a399ba94937a *man/centrality.Rd
 2faeb45c6b8ebac8115bb07483115379 *man/component_games.Rd
 15fdcaf594ebfa42786024befffc4722 *man/context_accessors.Rd
 a9a6621bbf5c2074797038c8338e019c *man/create_graphs.Rd
@@ -63,7 +63,7 @@ f4792f448edd844923bc95c91d422402 *man/dot-register_graph_context.Rd
 9d5d922b4e96bd0c4555fa28d2622735 *man/evolution_games.Rd
 783835eedb18deb7b7588bd75820490f *man/figures/logo.png
 0b29cc83b69904cc0c34a0641114f7b7 *man/fortify.tbl_graph.Rd
-d25bf7f1e406f3ac7599926f1b888e31 *man/graph_join.Rd
+9079f0b59b114fbe844304ca426eaa7a *man/graph_join.Rd
 5a82aed040552da90ad625ddfc39fa5d *man/graph_measures.Rd
 71c1e4acc8e557d51681baea216d0c90 *man/graph_types.Rd
 a001ddaa3c9bc503fe8b39f5151d9207 *man/group_graph.Rd
@@ -81,7 +81,7 @@ b0ee9ae28aebe3f0d101e168c6cc8854 *man/node_rank.Rd
 d2758d7017226ca4fa94985e3c2e941b *man/node_topology.Rd
 9a44a52fad9c0e1611827a996bd876ac *man/node_types.Rd
 613b6e3c3f85ea0a569f86d9a8cc2e21 *man/pair_measures.Rd
-9d151990e5dcdfcd46c0996cf499c6dc *man/reexports.Rd
+fb425a86e0c3b489fdc5b4fcca47c476 *man/reexports.Rd
 e5cdf2c9cad673b72c17988b5a5d6456 *man/reroute.Rd
 28d5563d75b013e954e06d994de41c1b *man/sampling_games.Rd
 81399059cb89e481ff6ed56e3ac012fc *man/search_graph.Rd
@@ -102,7 +102,7 @@ dfbe460ecc53f82d1a8a4fc41552f7e3 *tests/testthat/test-context.R
 c936eebda5c11317c0c66bed7a022a78 *tests/testthat/test-filter.R
 0291fc4e36c56aea8786972527f7d45d *tests/testthat/test-graph_attributes.R
 b6ce408a50b9e936c638a2ac6de5b93c *tests/testthat/test-graph_measures.R
-287451161faf4aa0641cda5c5082c9b5 *tests/testthat/test-group.R
+b64dca8e5e73e7a629616ce255d981d3 *tests/testthat/test-group.R
 81af8dcacd1cea3d885f80cf3164eba9 *tests/testthat/test-group_by.R
 5e24e8601df09ea2cbad0328b4439ac1 *tests/testthat/test-join.R
 b5152db5785617e01889e328287ba871 *tests/testthat/test-local.R
