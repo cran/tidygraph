@@ -1,5 +1,3 @@
-context("mutate")
-
 test_that("mutate works with nodes", {
   mut <- create_notable('bull') %>%
     mutate(letters = letters[1:5]) %>%
@@ -13,3 +11,5 @@ test_that("mutate works with edges", {
     pull(letters)
   expect_equal(mut, letters[1:5])
 })
+
+test_empty_context()

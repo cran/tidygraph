@@ -2,7 +2,7 @@
 #'
 #' The `morph`/`unmorph` verbs are used to create temporary representations of
 #' the graph, such as e.g. its search tree or a subgraph. A morphed graph will
-#' accept any of the standard `dplyr` verbs, and changed to the data is
+#' accept any of the standard `dplyr` verbs, and changes to the data is
 #' automatically propagated to the original graph when unmorphing. Tidygraph
 #' comes with a range of [morphers], but is it also possible to supply your own.
 #' See Details for the requirement for custom morphers. The `crystallise` verb
@@ -38,7 +38,7 @@
 #' `.tidygraph_edge_index` column (or both). Note that it is possible for the
 #' morph to have the edges mapped back to the original nodes and vice versa
 #' (e.g. as with [to_linegraph]). In that case the edge data in the morphed
-#' graph(s) will contain a `.tidygraph_node_index` column and or the node data a
+#' graph(s) will contain a `.tidygraph_node_index` column and/or the node data a
 #' `.tidygraph_edge_index` column. If the morphing results in the collapse of
 #' multiple columns or edges the index columns should be converted to list
 #' columns mapping the new node/edge back to all the nodes/edges it represents.
@@ -91,6 +91,10 @@ convert <- function(.data, .f, ..., .select = 1, .clean = FALSE) {
 #' @export
 #' @importFrom rlang as_quosure sym quo_text enquo
 morph.tbl_graph <- function(.data, .f, ...) {
+  if (is.focused_tbl_graph(.data)) {
+    cli::cli_inform('Unfocusing prior to morphing')
+    .data <- unfocus(.data)
+  }
   if (inherits(.data, 'grouped_tbl_graph')) {
     cli::cli_inform('Ungrouping prior to morphing')
     .data <- ungroup(.data)

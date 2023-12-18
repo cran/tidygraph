@@ -9,10 +9,13 @@
 \alias{group_label_prop}
 \alias{group_leading_eigen}
 \alias{group_louvain}
+\alias{group_leiden}
 \alias{group_optimal}
 \alias{group_spinglass}
 \alias{group_walktrap}
+\alias{group_fluid}
 \alias{group_biconnected_component}
+\alias{group_color}
 \title{Group nodes and edges based on community structure}
 \usage{
 group_components(type = "weak")
@@ -33,7 +36,17 @@ group_leading_eigen(
   n_groups = NULL
 )
 
-group_louvain(weights = NULL)
+group_louvain(weights = NULL, resolution = 1)
+
+group_leiden(
+  weights = NULL,
+  resolution = 1,
+  objective_function = "CPM",
+  beta = 0.01,
+  label = NULL,
+  n = 2,
+  node_weights = NULL
+)
 
 group_optimal(weights = NULL)
 
@@ -41,7 +54,11 @@ group_spinglass(weights = NULL, ...)
 
 group_walktrap(weights = NULL, steps = 4, n_groups = NULL)
 
+group_fluid(n_groups = 2)
+
 group_biconnected_component()
+
+group_color()
 }
 \arguments{
 \item{type}{The type of component to find. Either \code{'weak'} or \code{'strong'}}
@@ -51,7 +68,9 @@ evaluated in the context of the edge data.}
 
 \item{directed}{Should direction of edges be used for the calculations}
 
-\item{n_groups}{Integer scalar, the desired number of communities. If too low or two high, then an error message is given.}
+\item{n_groups}{Integer scalar, the desired number of communities. If too low
+or two high, then an error message is given. The measure is applied to the
+full graph so the number of groups returned may be lower for focused graphs}
 
 \item{node_weights}{The weight of the nodes to use for the calculation. Will
 be evaluated in the context of the node data.}
@@ -67,6 +86,17 @@ initial groups. Will be evaluated in the context of the node data.}
 \item{steps}{The number of steps in the random walks}
 
 \item{options}{Settings passed on to \code{igraph::arpack()}}
+
+\item{resolution}{Resolution of the modularity function used internally in
+the algorithm}
+
+\item{objective_function}{Either \code{"CPM"} (constant potts model) or
+\code{"modularity"}. Sets the objective function to use.}
+
+\item{beta}{Parameter affecting the randomness in the Leiden algorithm. This
+affects only the refinement step of the algorithm.}
+
+\item{n}{The number of iterations to run the clustering}
 
 \item{...}{arguments passed on to \code{\link[igraph:cluster_spinglass]{igraph::cluster_spinglass()}}}
 }
@@ -100,13 +130,19 @@ grouping of edges supported is biconnected components.
 
 \item \code{group_louvain()}: Group nodes by multilevel optimisation of modularity using \code{\link[igraph:cluster_louvain]{igraph::cluster_louvain()}}
 
+\item \code{group_leiden()}: Group nodes according to the Leiden algorithm (\code{\link[igraph:cluster_leiden]{igraph::cluster_leiden()}}) which is similar, but more efficient and provides higher quality results than \code{cluster_louvain()}
+
 \item \code{group_optimal()}: Group nodes by optimising the moldularity score using \code{\link[igraph:cluster_optimal]{igraph::cluster_optimal()}}
 
 \item \code{group_spinglass()}: Group nodes using simulated annealing with \code{\link[igraph:cluster_spinglass]{igraph::cluster_spinglass()}}
 
 \item \code{group_walktrap()}: Group nodes via short random walks using \code{\link[igraph:cluster_walktrap]{igraph::cluster_walktrap()}}
 
+\item \code{group_fluid()}: Group nodes by simulating fluid interactions on the graph topology using \code{\link[igraph:cluster_fluid_communities]{igraph::cluster_fluid_communities()}}
+
 \item \code{group_biconnected_component()}: Group edges by their membership of the maximal binconnected components using \code{\link[igraph:biconnected_components]{igraph::biconnected_components()}}
+
+\item \code{group_color()}: Groups nodes by their color using \code{\link[igraph:greedy_vertex_coloring]{igraph::greedy_vertex_coloring()}}. Be aware that this is not a clustering algorithm as coloring specifically provide a color to each node so that no neighbors have the same color
 
 }}
 \examples{

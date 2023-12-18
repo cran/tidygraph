@@ -1,5 +1,3 @@
-context("bind")
-
 test_that("bind_graphs works", {
   gr1 <- create_notable('bull')
   gr2 <- gr1
@@ -16,7 +14,7 @@ test_that('bind_nodes works', {
   gr1 <- tbl_graph(head(mtcars))
   gr1 <- bind_nodes(gr1, tail(mtcars))
   tbl <- dplyr::bind_rows(head(mtcars), tail(mtcars))
-  expect_equivalent(as_tibble(gr1), tbl)
+  expect_equal(as_tibble(gr1), tbl, ignore_attr = TRUE)
 })
 test_that('bind_edges works', {
   gr1 <- create_notable('bull') %>%
@@ -31,3 +29,5 @@ test_that('bind_edges works', {
   tbl2$to <- tbl2$to + 10
   expect_error(bind_edges(gr2, tbl2))
 })
+
+test_empty_context()

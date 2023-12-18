@@ -13,6 +13,7 @@
 \alias{centrality_subgraph}
 \alias{centrality_degree}
 \alias{centrality_edge_betweenness}
+\alias{centrality_harmonic}
 \alias{centrality_manual}
 \alias{centrality_closeness_harmonic}
 \alias{centrality_closeness_residual}
@@ -91,6 +92,13 @@ centrality_degree(
 )
 
 centrality_edge_betweenness(weights = NULL, directed = TRUE, cutoff = NULL)
+
+centrality_harmonic(
+  weights = NULL,
+  mode = "out",
+  normalized = FALSE,
+  cutoff = NULL
+)
 
 centrality_manual(relation = "dist_sp", aggregation = "sum", ...)
 
@@ -190,19 +198,20 @@ naming scheme and automatically calls the function on the graph, returning a
 vector with measures ready to be added to the node data. Further \code{tidygraph}
 provides access to the \code{netrankr} engine for centrality calculations and
 define a number of centrality measures based on that, as well as provide a
-manual mode for specifying more-or-less any centrality score.
+manual mode for specifying more-or-less any centrality score. These measures
+all only work on undirected graphs.
 }
 \section{Functions}{
 \itemize{
 \item \code{centrality_alpha()}: Wrapper for \code{\link[igraph:alpha_centrality]{igraph::alpha_centrality()}}
 
-\item \code{centrality_authority()}: Wrapper for \code{\link[igraph:authority_score]{igraph::authority_score()}}
+\item \code{centrality_authority()}: Wrapper for \code{\link[igraph:hub_score]{igraph::authority_score()}}
 
-\item \code{centrality_betweenness()}: Wrapper for \code{\link[igraph:betweenness]{igraph::betweenness()}} and \code{\link[igraph:betweenness]{igraph::estimate_betweenness()}}
+\item \code{centrality_betweenness()}: Wrapper for \code{\link[igraph:betweenness]{igraph::betweenness()}}
 
 \item \code{centrality_power()}: Wrapper for \code{\link[igraph:power_centrality]{igraph::power_centrality()}}
 
-\item \code{centrality_closeness()}: Wrapper for \code{\link[igraph:closeness]{igraph::closeness()}} and \code{\link[igraph:closeness]{igraph::estimate_closeness()}}
+\item \code{centrality_closeness()}: Wrapper for \code{\link[igraph:closeness]{igraph::closeness()}}
 
 \item \code{centrality_eigen()}: Wrapper for \code{\link[igraph:eigen_centrality]{igraph::eigen_centrality()}}
 
@@ -216,9 +225,11 @@ manual mode for specifying more-or-less any centrality score.
 
 \item \code{centrality_edge_betweenness()}: Wrapper for \code{\link[igraph:betweenness]{igraph::edge_betweenness()}}
 
+\item \code{centrality_harmonic()}: Wrapper for \code{\link[igraph:harmonic_centrality]{igraph::harmonic_centrality()}}
+
 \item \code{centrality_manual()}: Manually specify your centrality score using the \code{netrankr} framework (\code{netrankr})
 
-\item \code{centrality_closeness_harmonic()}: centrality based on inverse shortest path (\code{netrankr})
+\item \code{centrality_closeness_harmonic()}: \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} centrality based on inverse shortest path (\code{netrankr})
 
 \item \code{centrality_closeness_residual()}: centrality based on 2-to-the-power-of negative shortest path (\code{netrankr})
 

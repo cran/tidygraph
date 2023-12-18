@@ -1,5 +1,3 @@
-context("graph_measures")
-
 test_that("graph measures returns scalars", {
   gr <- create_notable('housex') %>%
     mutate(type = c(1, 1, 1, 2, 2))
@@ -20,6 +18,7 @@ test_that("graph measures returns scalars", {
   expect_length(graph_reciprocity(), 1)
   expect_length(graph_size(), 1)
   expect_length(graph_modularity(type), 1)
+  expect_length(graph_efficiency(), 1)
   .graph_context$clear()
   gr <- create_ring(5, TRUE) %>%
     mutate(type = c(1, 1, 1, 2, 2))
@@ -29,3 +28,5 @@ test_that("graph measures returns scalars", {
   expect_length(graph_unconn_count(), 1)
   .graph_context$clear()
 })
+
+test_empty_context()

@@ -21,13 +21,14 @@
 \alias{graph_min_cut}
 \alias{graph_mean_dist}
 \alias{graph_modularity}
+\alias{graph_efficiency}
 \title{Graph measurements}
 \usage{
 graph_adhesion()
 
 graph_assortativity(attr, in_attr = NULL, directed = TRUE)
 
-graph_automorphisms(sh = "fm")
+graph_automorphisms(sh = "fm", colors = NULL)
 
 graph_clique_num()
 
@@ -57,9 +58,11 @@ graph_reciprocity(ignore_loops = TRUE, ratio = FALSE)
 
 graph_min_cut(capacity = NULL)
 
-graph_mean_dist(directed = TRUE, unconnected = TRUE)
+graph_mean_dist(directed = TRUE, unconnected = TRUE, weights = NULL)
 
 graph_modularity(group, weights = NULL)
+
+graph_efficiency(weights = NULL, directed = TRUE)
 }
 \arguments{
 \item{attr}{The node attribute to measure on}
@@ -75,6 +78,13 @@ cell, \sQuote{\code{fm}}: first maximally non-trivially connected
 non-singleton cell, \sQuote{\code{flm}}: first largest maximally
 non-trivially connected non-singleton cell, \sQuote{\code{fsm}}: first
 smallest maximally non-trivially connected non-singleton cell.}
+
+\item{colors}{The colors of the individual vertices of the graph; only
+vertices having the same color are allowed to match each other in an
+automorphism. When omitted, igraph uses the \code{color} attribute of the
+vertices, or, if there is no such vertex attribute, it simply assumes that
+all vertices have the same color. Pass NULL explicitly if the graph has a
+\code{color} vertex attribute but you do not want to use it.}
 
 \item{min, max}{The upper and lower bounds of the cliques to be considered.}
 
@@ -125,7 +135,7 @@ them.
 
 \item \code{graph_assortativity()}: Measures the propensity of similar nodes to be connected. Wraps \code{\link[igraph:assortativity]{igraph::assortativity()}}
 
-\item \code{graph_automorphisms()}: Calculate the number of automorphisms of the graph. Wraps \code{\link[igraph:automorphisms]{igraph::automorphisms()}}
+\item \code{graph_automorphisms()}: Calculate the number of automorphisms of the graph. Wraps \code{\link[igraph:count_automorphisms]{igraph::count_automorphisms()}}
 
 \item \code{graph_clique_num()}: Get the size of the largest clique. Wraps \code{\link[igraph:cliques]{igraph::clique_num()}}
 
@@ -158,6 +168,8 @@ them.
 \item \code{graph_mean_dist()}: Calculates the mean distance between all node pairs in the graph. Wraps \code{\link[igraph:distances]{igraph::mean_distance()}}
 
 \item \code{graph_modularity()}: Calculates the modularity of the graph contingent on a provided node grouping
+
+\item \code{graph_efficiency()}: Calculate the global efficiency of the graph
 
 }}
 \examples{

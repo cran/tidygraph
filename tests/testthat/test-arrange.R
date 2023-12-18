@@ -1,5 +1,3 @@
-context("arrange")
-
 test_that("arrange works with nodes", {
   ord <- c(2, 4, 1, 3, 5)
   gr1 <- create_notable('bull')
@@ -20,3 +18,5 @@ test_that('reserved words are protected', {
   gr1 <- mutate(gr1, .tbl_graph_index = letters[1:5], order = ord)
   expect_error(arrange(gr1, order))
 })
+
+test_empty_context()

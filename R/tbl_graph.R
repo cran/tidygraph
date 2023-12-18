@@ -74,31 +74,88 @@ as_tbl_graph.default <- function(x, ...) {
 is.tbl_graph <- function(x) {
   inherits(x, 'tbl_graph')
 }
-#' @importFrom tibble trunc_mat
+
+#' @importFrom rlang caller_arg
+check_tbl_graph <- function(x, arg = caller_arg(x), call = caller_env()) {
+  if (!is.tbl_graph(x)) {
+    cli::cli_abort('{.arg {arg}} must be a {.cls tbl_graph} object', call = call)
+  }
+}
+
+check_reserved <- function(x, call = caller_env()) {
+  if (any(names(x) == '.tbl_graph_index')) {
+    cli::cli_abort('The attribute name {.field .tbl_graph_index} is reserved', call = call)
+  }
+}
+
+new_name_tibble <- function(x, active = NULL, name = "A tibble", suffix = "") {
+  x <- as_tibble(x, active, focused = FALSE)
+  attr(x, "name") <- name
+  attr(x, "suffix") <- suffix
+  class(x) <- c("named_tbl", class(x))
+  x
+}
+#' @importFrom pillar tbl_sum
+#' @export
+tbl_sum.named_tbl <- function(x) {
+  summary <- NextMethod()
+  names(summary)[1] <- attr(x, "name")
+  summary[1] <- paste0(summary[1], attr(x, "suffix"))
+  summary
+}
+#' @importFrom pillar tbl_format_footer
+#' @export
+tbl_format_footer.named_tbl <- function(x, setup, ...) {
+  footer <- NextMethod()
+  footer[!grepl("to see more rows", footer)]
+}
+
 #' @importFrom tools toTitleCase
 #' @importFrom rlang as_quosure sym
-#' @importFrom pillar style_subtle
 #' @export
-print.tbl_graph <- function(x, ...) {
-  arg_list <- list(...)
-  arg_list[['useS4']] <- NULL
+print.tbl_graph <- function(x, ..., n_non_active = 3) {
   graph_desc <- describe_graph(x)
   not_active <- if (active(x) == 'nodes') 'edges' else 'nodes'
-  top <- do.call(trunc_mat, modifyList(arg_list, list(x = as_tibble(x), n = 6)))
-  top$summary[1] <- paste0(top$summary[1], ' (active)')
-  names(top$summary)[1] <- toTitleCase(paste0(substr(active(x), 1, 4), ' data'))
-  bottom <- do.call(trunc_mat, modifyList(arg_list, list(x = as_tibble(x, active = not_active), n = 3)))
-  names(bottom$summary)[1] <- toTitleCase(paste0(substr(not_active, 1, 4), ' data'))
+  top <- toTitleCase(paste0(substr(active(x), 1, 4), ' data'))
+  bottom <- toTitleCase(paste0(substr(not_active, 1, 4), ' data'))
   cat_subtle('# A tbl_graph: ', gorder(x), ' nodes and ', gsize(x), ' edges\n', sep = '')
   cat_subtle('#\n')
   cat_subtle('# ', graph_desc, '\n', sep = '')
   cat_subtle('#\n')
-  print(top)
+  if (is.focused_tbl_graph(x)) {
+    cat_subtle('# Focused on ', length(focus_ind(x)), ' ', active(x), '\n')
+  }
+  print(new_name_tibble(x, NULL, top, " (active)"), ...)
   cat_subtle('#\n')
-  print(bottom)
+  print(new_name_tibble(x, not_active, bottom, ""), n = n_non_active)
   invisible(x)
 }
 
+#' @importFrom pillar glimpse
+#' @export
+glimpse.tbl_graph <- function(x, width = NULL, ...) {
+  cli::cli_rule(left = "Nodes")
+  glimpse(as_tibble(x, active = "nodes"))
+  cli::cat_line()
+  cli::cli_rule(left = "Edges")
+  glimpse(as_tibble(x, active = "edges"))
+}
+
+#' @importFrom pillar glimpse
+#' @export
+glimpse.morphed_tbl_graph <- function(x, width = NULL, ...) {
+  graph <- attr(x, '.orig_graph')
+
+  cat_subtle("Currently morphed to a ", gsub('_', ' ', sub('to_', '', attr(x, '.morpher'))), " representation\n")
+  cli::cat_line()
+  cli::cli_rule(left = "Nodes")
+  glimpse(as_tibble(graph, active = "nodes"))
+  cli::cat_line()
+  cli::cli_rule(left = "Edges")
+  glimpse(as_tibble(graph, active = "edges"))
+}
+
+#' @importFrom pillar style_subtle
 cat_subtle <- function(...) cat(pillar::style_subtle(paste0(...)))
 
 #' @export
@@ -153,15 +210,21 @@ set_graph_data.tbl_graph <- function(x, value, active = NULL) {
 }
 set_graph_data.grouped_tbl_graph <- function(x, value, active = NULL) {
   x <- NextMethod()
-  apply_groups(x, attributes(value))
+  apply_groups(x, value)
 }
 #' @importFrom igraph vertex_attr<-
 set_node_attributes <- function(x, value) {
+  if (is.focused_tbl_graph(x)) {
+    value <- merge_into(value, as_tibble(x, active = 'nodes', focused = FALSE), focus_ind(x, 'nodes'))
+  }
   vertex_attr(x) <- as.list(value)
   x
 }
 #' @importFrom igraph edge_attr<-
 set_edge_attributes <- function(x, value) {
+  if (is.focused_tbl_graph(x)) {
+    value <- merge_into(value, as_tibble(x, active = 'edges', focused = FALSE), focus_ind(x, 'edges'))
+  }
   value <- value[, !names(value) %in% c('from', 'to')]
   edge_attr(x) <- as.list(value)
   x
@@ -173,3 +236,11 @@ tbl_vars.tbl_graph <- function(x) {
 }
 #' @export
 dplyr::tbl_vars
+
+merge_into <- function(new, old, index) {
+  order <- new[integer(0), , drop = FALSE]
+  old <- bind_rows(order, old)
+  old[, !names(old) %in% names(new)] <- NULL
+  old[index, ] <- new
+  old
+}

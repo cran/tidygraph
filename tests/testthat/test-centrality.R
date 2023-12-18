@@ -1,24 +1,23 @@
-context("centrality")
-
 get_cent <- function(gr, fn) {
   gr %>% mutate(cent = fn) %>% pull(cent)
 }
 test_that("centrality returns numeric", {
   gr1 <- create_notable('diamond')
-  expect_is(get_cent(gr1, centrality_alpha()), 'numeric')
-  expect_is(get_cent(gr1, centrality_betweenness()), 'numeric')
-  expect_is(get_cent(gr1, centrality_closeness()), 'numeric')
-  expect_is(get_cent(gr1, centrality_degree()), 'numeric')
-  expect_is(get_cent(gr1, centrality_pagerank()), 'numeric')
-  expect_is(get_cent(gr1, centrality_power()), 'numeric')
-  expect_is(get_cent(gr1, centrality_subgraph()), 'numeric')
+  expect_type(get_cent(gr1, centrality_alpha()), 'double')
+  expect_type(get_cent(gr1, centrality_betweenness()), 'double')
+  expect_type(get_cent(gr1, centrality_closeness()), 'double')
+  expect_type(get_cent(gr1, centrality_degree()), 'double')
+  expect_type(get_cent(gr1, centrality_pagerank()), 'double')
+  expect_type(get_cent(gr1, centrality_power()), 'double')
+  expect_type(get_cent(gr1, centrality_subgraph()), 'double')
+  expect_type(get_cent(gr1, centrality_harmonic()), 'double')
   gr2 <- activate(gr1, 'edges')
-  expect_is(get_cent(gr2, centrality_edge_betweenness()), 'numeric')
+  expect_type(get_cent(gr2, centrality_edge_betweenness()), 'double')
 
   skip_on_os('windows')
-  expect_is(get_cent(gr1, centrality_authority()), 'numeric')
-  expect_is(get_cent(gr1, centrality_eigen()), 'numeric')
-  expect_is(get_cent(gr1, centrality_hub()), 'numeric')
+  expect_type(get_cent(gr1, centrality_authority()), 'double')
+  expect_type(get_cent(gr1, centrality_eigen()), 'double')
+  expect_type(get_cent(gr1, centrality_hub()), 'double')
 })
 test_that("centrality returns correct length", {
   gr1 <- create_notable('diamond')
@@ -29,6 +28,7 @@ test_that("centrality returns correct length", {
   expect_length(get_cent(gr1, centrality_pagerank()), 4)
   expect_length(get_cent(gr1, centrality_power()), 4)
   expect_length(get_cent(gr1, centrality_subgraph()), 4)
+  expect_length(get_cent(gr1, centrality_harmonic()), 4)
   gr2 <- activate(gr1, 'edges')
   expect_length(get_cent(gr2, centrality_edge_betweenness()), 5)
 
@@ -36,6 +36,24 @@ test_that("centrality returns correct length", {
   expect_length(get_cent(gr1, centrality_authority()), 4)
   expect_length(get_cent(gr1, centrality_eigen()), 4)
   expect_length(get_cent(gr1, centrality_hub()), 4)
+})
+test_that("centrality returns correct length for focus", {
+  gr1 <- create_notable('diamond') |> focus(dplyr::row_number() < 3)
+  expect_length(get_cent(gr1, centrality_alpha()), 2)
+  expect_length(get_cent(gr1, centrality_betweenness()), 2)
+  expect_length(get_cent(gr1, centrality_closeness()), 2)
+  expect_length(get_cent(gr1, centrality_degree()), 2)
+  expect_length(get_cent(gr1, centrality_pagerank()), 2)
+  expect_length(get_cent(gr1, centrality_power()), 2)
+  expect_length(get_cent(gr1, centrality_subgraph()), 2)
+  expect_length(get_cent(gr1, centrality_harmonic()), 2)
+  gr2 <- activate(gr1, 'edges') |> focus(dplyr::row_number() < 3)
+  expect_length(get_cent(gr2, centrality_edge_betweenness()), 2)
+
+  skip_on_os('windows')
+  expect_length(get_cent(gr1, centrality_authority()), 2)
+  expect_length(get_cent(gr1, centrality_eigen()), 2)
+  expect_length(get_cent(gr1, centrality_hub()), 2)
 })
 test_that("centrality requires the right activation", {
   gr1 <- create_notable('diamond')
@@ -48,9 +66,12 @@ test_that("centrality requires the right activation", {
   expect_error(get_cent(gr2, centrality_pagerank()))
   expect_error(get_cent(gr2, centrality_power()))
   expect_error(get_cent(gr2, centrality_subgraph()))
+  expect_error(get_cent(gr2, centrality_harmonic()))
 
   skip_on_os('windows')
   expect_error(get_cent(gr2, centrality_authority()))
   expect_error(get_cent(gr2, centrality_eigen()))
   expect_error(get_cent(gr2, centrality_hub()))
 })
+
+test_empty_context()

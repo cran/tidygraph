@@ -25,34 +25,38 @@ workflow.
 ``` r
 library(tidygraph)
 
-play_erdos_renyi(10, 0.5) %>% 
+play_gnp(10, 0.5) %>% 
   activate(nodes) %>% 
   mutate(degree = centrality_degree()) %>% 
   activate(edges) %>% 
   mutate(centrality = centrality_edge_betweenness()) %>% 
   arrange(centrality)
-#> # A tbl_graph: 10 nodes and 47 edges
+#> # A tbl_graph: 10 nodes and 51 edges
 #> #
 #> # A directed simple graph with 1 component
 #> #
-#> # Edge Data: 47 × 3 (active)
-#>    from    to centrality
-#>   <int> <int>      <dbl>
-#> 1     1     4       1   
-#> 2     1     7       1.2 
-#> 3     1     2       1.45
-#> 4     1     5       1.45
-#> 5     1     9       1.45
-#> 6     5     4       1.5 
-#> # … with 41 more rows
+#> # Edge Data: 51 × 3 (active)
+#>     from    to centrality
+#>    <int> <int>      <dbl>
+#>  1     2     7       1.25
+#>  2     6     5       1.33
+#>  3     1     3       1.4 
+#>  4     2    10       1.53
+#>  5     2     8       1.58
+#>  6     8     9       1.65
+#>  7     2     3       1.67
+#>  8     2     5       1.73
+#>  9     3     5       1.73
+#> 10     8     5       1.73
+#> # ℹ 41 more rows
 #> #
 #> # Node Data: 10 × 1
 #>   degree
 #>    <dbl>
-#> 1      7
-#> 2      5
-#> 3      5
-#> # … with 7 more rows
+#> 1      6
+#> 2      7
+#> 3      6
+#> # ℹ 7 more rows
 ```
 
 ## Overview
@@ -124,8 +128,8 @@ where the needs arise.
 on GitHub, use the `devtools` package for installation:
 
 ``` r
-# install.packages('devtools')
-devtools::install_github('thomasp85/tidygraph')
+# install.packages('pak')
+pak::pak('thomasp85/tidygraph')
 ```
 
 ## Thanks

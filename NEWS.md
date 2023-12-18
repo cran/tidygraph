@@ -1,3 +1,43 @@
+# tidygraph 1.3.0
+
+* Add `resolution` argument to `group_louvrain()` to mirror the igraph function
+* `as_tbl_graph()` on an edge dataframe now only adds a name node attribute if 
+  the edges are encoded as a character (#147)
+* Added `node_is_connected()` to test whether a node is connected to a set of 
+  nodes (#165)
+* Deprecated `play_erdos_renyi()` in favour of `play_gnm()` and `play_gnp()` 
+  (#152)
+* Added the whole family of `slice_*()` functions from dplyr (#128)
+* Added methods for `tidyr::replace_na()` and `tidyr::drop_na()` (#114)
+* Added `edge_is_bridge()` for querying whether an edge is a bridge edge (#113)
+* Added a `glimpse()` method for `tbl_graph` and `morphed_tbl_graph` objects 
+  (#30)
+* Add `iterate_n()` and `iterate_while()` to perform repeated modifications of
+  a graph for a specific number of times or until a condition no longer is met 
+  (#43)
+* Add `focus()`/`unfocus()` verbs to limit node and edge algorithms to a subset
+  while still keeping the full graph context (#18)
+* Data frame subclasses with sticky columns (such as those from sf and tsibble)
+  now works with the tbl_graph constructors (#184)
+* `graph_automorphisms()` gains a `color` argument in line with capabilities in
+  igraph
+* `graph_mean_dist()` now supports edge weights through a new `weights` argument
+* Added `to_largest_component()` morpher
+* Added `graph_is_eulerian()` and `edge_rank_eulerian()` for eulerian path 
+  calculations
+* Added `to_random_spanning_tree()` morpher
+* Added `min_order` argument to `to_components()` morpher
+* Added `random_walk_rank()` to perform random walks on the graph
+* Added `centrality_harmonic()` + deprecated `centrality_closeness_harmonic()`.
+  The latter is an interface to netrankr while the former is a more efficient 
+  and flexible igraph implementation.
+* Added `group_color()` as an interface to `greedy_vertex_coloring()` in igraph
+* Added `group_leiden()` to interface with `cluster_leiden()` in igraph
+* Added `group_fluid()` to interface with `cluster_fluid_communities()` in igraph
+* Added `edge_is_feedback_arc()` to interface with `feedback_arc_set()` in igraph
+* Added `graph_efficiency()` and `node_effeciency()` interfacing with 
+  `global_efficiency()` and `local_efficiency()` in igraph
+
 # tidygraph 1.2.3
 
 * Small updates to work with new versions of igraph and dplyr

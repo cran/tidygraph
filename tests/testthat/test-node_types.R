@@ -1,19 +1,18 @@
-context("node_types")
-
 get_type <- function(gr, fn) {
   gr %>% mutate(type = fn) %>% pull(type)
 }
 test_that("node types return logical", {
   gr <- create_tree(10, 2)
-  expect_is(get_type(gr, node_is_center()), 'logical')
-  expect_is(get_type(gr, node_is_cut()), 'logical')
-  expect_is(get_type(gr, node_is_isolated()), 'logical')
-  expect_is(get_type(gr, node_is_leaf()), 'logical')
-  expect_is(get_type(gr, node_is_root()), 'logical')
-  expect_is(get_type(gr, node_is_simplical()), 'logical')
-  expect_is(get_type(gr, node_is_sink()), 'logical')
-  expect_is(get_type(gr, node_is_source()), 'logical')
-  expect_is(get_type(gr, node_is_universal()), 'logical')
+  expect_type(get_type(gr, node_is_center()), 'logical')
+  expect_type(get_type(gr, node_is_cut()), 'logical')
+  expect_type(get_type(gr, node_is_isolated()), 'logical')
+  expect_type(get_type(gr, node_is_leaf()), 'logical')
+  expect_type(get_type(gr, node_is_root()), 'logical')
+  expect_type(get_type(gr, node_is_simplical()), 'logical')
+  expect_type(get_type(gr, node_is_sink()), 'logical')
+  expect_type(get_type(gr, node_is_source()), 'logical')
+  expect_type(get_type(gr, node_is_universal()), 'logical')
+  expect_type(get_type(gr, node_is_connected(1:4)), 'logical')
 })
 test_that("node types return vector of correct length", {
   gr <- create_tree(10, 2)
@@ -26,6 +25,21 @@ test_that("node types return vector of correct length", {
   expect_length(get_type(gr, node_is_sink()), igraph::gorder(gr))
   expect_length(get_type(gr, node_is_source()), igraph::gorder(gr))
   expect_length(get_type(gr, node_is_universal()), igraph::gorder(gr))
+  expect_length(get_type(gr, node_is_connected(1:4)), igraph::gorder(gr))
+})
+test_that("node types return vector of correct length for focus", {
+  gr <- create_tree(10, 2) |>
+    focus(dplyr::row_number() < 3)
+  expect_length(get_type(gr, node_is_center()), 2)
+  expect_length(get_type(gr, node_is_cut()), 2)
+  expect_length(get_type(gr, node_is_isolated()), 2)
+  expect_length(get_type(gr, node_is_leaf()), 2)
+  expect_length(get_type(gr, node_is_root()), 2)
+  expect_length(get_type(gr, node_is_simplical()), 2)
+  expect_length(get_type(gr, node_is_sink()), 2)
+  expect_length(get_type(gr, node_is_source()), 2)
+  expect_length(get_type(gr, node_is_universal()), 2)
+  expect_length(get_type(gr, node_is_connected(1:4)), 2)
 })
 test_that("node types require active nodes", {
   gr <- create_tree(10, 2) %>% activate(edges)
@@ -38,4 +52,7 @@ test_that("node types require active nodes", {
   expect_error(get_type(gr, node_is_sink()))
   expect_error(get_type(gr, node_is_source()))
   expect_error(get_type(gr, node_is_universal()))
+  expect_error(get_type(gr, node_is_connected(1:4)))
 })
+
+test_empty_context()

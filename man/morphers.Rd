@@ -7,10 +7,12 @@
 \alias{to_subcomponent}
 \alias{to_split}
 \alias{to_components}
+\alias{to_largest_component}
 \alias{to_complement}
 \alias{to_local_neighborhood}
 \alias{to_dominator_tree}
 \alias{to_minimum_spanning_tree}
+\alias{to_random_spanning_tree}
 \alias{to_shortest_path}
 \alias{to_bfs_tree}
 \alias{to_dfs_tree}
@@ -30,7 +32,9 @@ to_subcomponent(graph, node)
 
 to_split(graph, ..., split_by = NULL)
 
-to_components(graph, type = "weak")
+to_components(graph, type = "weak", min_order = 1)
+
+to_largest_component(graph, type = "weak")
 
 to_complement(graph, loops = FALSE)
 
@@ -39,6 +43,8 @@ to_local_neighborhood(graph, node, order = 1, mode = "all")
 to_dominator_tree(graph, root, mode = "out")
 
 to_minimum_spanning_tree(graph, weights = NULL)
+
+to_random_spanning_tree(graph)
 
 to_shortest_path(graph, from, to, mode = "out", weights = NULL)
 
@@ -71,6 +77,9 @@ and \code{\link[igraph:cluster_edge_betweenness]{igraph::cluster_edge_betweennes
 the node to that should be included in the component for \code{to_subcomponent()}}
 
 \item{type}{The type of component to split into. Either \code{'weak'} or \code{'strong'}}
+
+\item{min_order}{The minimum order (number of vertices) of the component.
+Components below this will not be created}
 
 \item{loops}{Should loops be included. Defaults to \code{FALSE}}
 
@@ -128,6 +137,10 @@ present in multiple subgraphs).
 \item \code{to_components()}: Split a graph into its separate components. When
 unmorphing all data in the subgraphs will get merged back.
 
+\item \code{to_largest_component()}: Create a new graph only consisting of it's largest
+component. If multiple largest components exists, the one with containing the
+node with the lowest index is chosen.
+
 \item \code{to_complement()}: Convert a graph into its complement. When unmorphing
 only node data will get merged back.
 
@@ -139,6 +152,9 @@ specific root. When unmorphing only node data will get merged back.
 
 \item \code{to_minimum_spanning_tree()}: Convert a graph into its minimum spanning tree/forest.
 When unmorphing all data will get merged back.
+
+\item \code{to_random_spanning_tree()}: Convert a graph into a random spanning tree/forest. When
+unmorphing all data will get merged back
 
 \item \code{to_shortest_path()}: Limit a graph to the shortest path between two nodes.
 When unmorphing all data is merged back.
